@@ -146,7 +146,10 @@ class MigrationShell extends Shell {
 		if (!empty($this->params['connection'])) {
 			$this->connection = $this->params['connection'];
 		}
-		if (preg_match("/[\/\\\]plugins[\/\\\]([^\/]+)[\/\\\]vendors[\/\\\]shells[\/\\\]migration\.php$/", $this->Dispatch->shellPath, $matches)) {
+		
+		$shellPaths = App::path('shells');
+
+		if (preg_match("/[\/\\\]plugins[\/\\\]([^\/]+)[\/\\\]vendors[\/\\\]shells[\/\\\]migration\.php$/", $shellPaths[0], $matches)) {
 			$this->_pluginName = Inflector::camelize($matches[1]);
 		}
 	}
