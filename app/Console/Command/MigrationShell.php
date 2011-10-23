@@ -139,7 +139,7 @@ class MigrationShell extends Shell {
  */
 	protected function _paramsParsing() {
 		if (empty($this->params['path'])) {
-			$this->path = APP_DIR . 'config' . DS . 'sql' . DS . 'migrations';
+			$this->path = APP_DIR . DS . 'Config' . DS . 'sql' . DS . 'migrations';
 		} else {
 			$this->path = rtrim($this->params['path'], DS);
 		}
@@ -381,20 +381,23 @@ class MigrationShell extends Shell {
  */
 	protected function _readPathInfo() {
 		App::import('Core', 'Folder');
-		$folder = new Folder($this->path);
-		if (!$folder) {
+		try{
+			$folder = new DirectoryIterator($this->path);
+		}
+		catch(Exception $e){
 			$this->err(__d('migrations', 'Specified path does not exist.', true));
 			$this->out(String::insert(
 					__d('migrations', 'Creates the following directory: :path',true),
-					array('path' => APP_DIR . 'config' . DS . 'sql' . DS . 'migrations')
+					array('path' => APP_DIR . DS . 'Config' . DS . 'sql' . DS . 'migrations')
 				)
 			);
 			$this->_stop();
 		}
-		$read = $folder->read();
 
 		$filesInfo = array();
-		foreach ($read[1] as $id => $file) { // Check only files
+		foreach($folder as $id => $fileObj) { // Check only files
+			$file = $fileObj->getfileName();
+
 			if (!preg_match('/^(\d{14})_(\w+)\.php/', $file, $matches)) {
 				continue;
 			}
@@ -425,7 +428,7 @@ class MigrationShell extends Shell {
 		App::import('Vendor', $this->_pluginName . '.Migration'); // To not need include in migration file
 		if(!class_exists('AppMigration')) {
 			if (file_exists(APP_DIR . 'app_migration.php')) {
-				include APP_DIR . 'app_migration.php';
+				include APP_DIR . DS . 'app_migration.php';
 			} else {
 				App::import('Vendor', $this->_pluginName . '.AppMigration');
 			}
@@ -515,7 +518,7 @@ class MigrationShell extends Shell {
 	-path <dir>
 		path <dir> to read and write migrations scripts.
 		default path: :path", true),
-		array ('path' => $this->params['working'] . DS . 'config' . DS . 'sql' . DS . 'migrations')));
+		array ('path' => $this->params['working'] . DS . 'Config' . DS . 'sql' . DS . 'migrations')));
 
 		$this->out(__d('migrations',
 "Commands:
