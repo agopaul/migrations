@@ -139,7 +139,7 @@ class MigrationShell extends Shell {
  */
 	protected function _paramsParsing() {
 		if (empty($this->params['path'])) {
-			$this->path = APP_PATH . 'config' . DS . 'sql' . DS . 'migrations';
+			$this->path = APP_DIR . 'config' . DS . 'sql' . DS . 'migrations';
 		} else {
 			$this->path = rtrim($this->params['path'], DS);
 		}
@@ -383,7 +383,7 @@ class MigrationShell extends Shell {
 			$this->err(__d('migrations', 'Specified path does not exist.', true));
 			$this->out(String::insert(
 					__d('migrations', 'Creates the following directory: :path',true),
-					array('path' => APP_PATH . 'config' . DS . 'sql' . DS . 'migrations')
+					array('path' => APP_DIR . 'config' . DS . 'sql' . DS . 'migrations')
 				)
 			);
 			$this->_stop();
@@ -421,8 +421,8 @@ class MigrationShell extends Shell {
 		}
 		App::import('Vendor', $this->_pluginName . '.Migration'); // To not need include in migration file
 		if(!class_exists('AppMigration')) {
-			if (file_exists(APP_PATH . 'app_migration.php')) {
-				include APP_PATH . 'app_migration.php';
+			if (file_exists(APP_DIR . 'app_migration.php')) {
+				include APP_DIR . 'app_migration.php';
 			} else {
 				App::import('Vendor', $this->_pluginName . '.AppMigration');
 			}
