@@ -357,15 +357,22 @@ class MigrationShell extends Shell {
 		} else {
 			$this->_template = $templateDir . 'single_template.php';
 		}
-		App::import('Core', 'File');
+		
 		$strings = array(
 			'niceName' => Inflector::camelize($this->args[0]),
 			'date' => date(__d('migrations', 'm/d/Y H:i:s',true))
 		);
-		$template = new File($this->_template);
+
+		$template = new SplFileObject($this->_template, "r");
+		$templateContent = "";
+		foreach($template as $line){
+			$templateContent .= $line;	
+		}
+
 		$filename = $this->path . DS . date('YmdHis') . '_' . Inflector::underscore($this->args[0]) . '.php';
-		$file = new File($filename, true);
-		if (!$file->write(String::insert($template->read(), $strings))) {
+		$file = new SplFileObject($filename, "w");
+
+		if (!$file->fwrite(String::insert($templateContent, $strings))) {
 			$this->err(__d('migrations', 'Oops, did not write the migration!',true));
 			$this->_stop();
 		}
@@ -384,7 +391,7 @@ class MigrationShell extends Shell {
  * @access protected
  */
 	protected function _readPathInfo() {
-		App::import('Core', 'Folder');
+
 		try{
 			$folder = new DirectoryIterator($this->path);
 		}
