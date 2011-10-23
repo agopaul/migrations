@@ -146,6 +146,10 @@ class MigrationShell extends Shell {
 		if (!empty($this->params['connection'])) {
 			$this->connection = $this->params['connection'];
 		}
+
+		if (empty($this->params['working'])){
+			$this->params['working'] = APP_DIR;
+		}
 		
 		$shellPaths = App::path('shells');
 
